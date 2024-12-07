@@ -31,6 +31,18 @@ def draw_grid():
     for y in range(SEPARATION, SCREEN_SIZE, SEPARATION):
         pygame.draw.line(surface=screen, color="white", start_pos=(0, y), end_pos=(SCREEN_SIZE, y))
 
+def grid_to_pixel(coord):
+    """Given a grid coordinate, return the coordinates of the top right pixel in that"""
+
+    return (coord[0]*SEPARATION, coord[1]*SEPARATION)
+
+def fill_square(grid_coord, color):
+    """Given a grid coordinate and a color, fill that square with that color"""
+
+    pixel_coord = grid_to_pixel(grid_coord)
+    rect = pygame.Rect(pixel_coord, (SEPARATION, SEPARATION))
+    screen.fill(color=color, rect=rect)
+
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -39,6 +51,7 @@ while running:
             running = False
 
     draw_grid()
+    fill_square((19, 1), "green")
 
     pygame.draw.circle(screen, "red", player_pos, 40)
 
