@@ -9,6 +9,10 @@ SCREEN_SIZE = 720
 GRID_SIZE = 20
 SEPARATION = SCREEN_SIZE//GRID_SIZE
 
+head = (GRID_SIZE//2, GRID_SIZE//2)
+del_x = 0
+del_y = 0
+
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
@@ -50,27 +54,32 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    # Reset the frame by drawing the grid
     draw_grid()
-    fill_square((19, 1), "green")
-
-    pygame.draw.circle(screen, "red", player_pos, 40)
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player_pos.y -= 300 * dt
-    if keys[pygame.K_s]:
-        player_pos.y += 300 * dt
-    if keys[pygame.K_a]:
-        player_pos.x -= 300 * dt
-    if keys[pygame.K_d]:
-        player_pos.x += 300 * dt
+    if keys[pygame.K_UP]:
+        del_x = 0
+        del_y = -1
+    if keys[pygame.K_DOWN]:
+        del_x = 0
+        del_y = 1
+    if keys[pygame.K_LEFT]:
+        del_x = -1
+        del_y = 0
+    if keys[pygame.K_RIGHT]:
+        del_x = 1
+        del_y = 0
+
+    head = (head[0]+del_x, head[1]+del_y)
+    fill_square(head, "green")
 
     # flip() the display to put your work on screen
     pygame.display.flip()
 
-    # limits FPS to 60
+    # limits FPS to 15
     # dt is delta time in seconds since last frame, used for framerate-
     # independent physics.
-    dt = clock.tick(60) / 1000
+    dt = clock.tick(15) / 1000
 
 pygame.quit()
