@@ -4,14 +4,32 @@ App to play the game of snake
 
 import pygame
 
+# Define game globals
+SCREEN_SIZE = 720
+GRID_SIZE = 20
+SEPARATION = SCREEN_SIZE//GRID_SIZE
+
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
 clock = pygame.time.Clock()
 running = True
 dt = 0
 
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+
+def draw_grid():
+    """Draws out the grid background based on game global parameters"""
+
+    screen.fill("black")
+
+    # Draw the vertical lines
+    for x in range(SEPARATION, SCREEN_SIZE, SEPARATION):
+        pygame.draw.line(surface=screen, color="white", start_pos=(x, 0), end_pos=(x, SCREEN_SIZE))
+
+    # Draw the horizontal lines
+    for y in range(SEPARATION, SCREEN_SIZE, SEPARATION):
+        pygame.draw.line(surface=screen, color="white", start_pos=(0, y), end_pos=(SCREEN_SIZE, y))
 
 while running:
     # poll for events
@@ -20,8 +38,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
+    draw_grid()
 
     pygame.draw.circle(screen, "red", player_pos, 40)
 
