@@ -3,24 +3,12 @@ App to play the game of snake
 """
 
 import pygame
+import random
 
 # Define game globals
 SCREEN_SIZE = 720
 GRID_SIZE = 20
 SEPARATION = SCREEN_SIZE//GRID_SIZE
-
-head = (GRID_SIZE//2, GRID_SIZE//2)
-del_x = 0
-del_y = 0
-
-# pygame setup
-pygame.init()
-screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
-clock = pygame.time.Clock()
-running = True
-dt = 0
-
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
 def draw_grid():
     """Draws out the grid background based on game global parameters"""
@@ -47,6 +35,36 @@ def fill_square(grid_coord, color):
     rect = pygame.Rect(pixel_coord, (SEPARATION, SEPARATION))
     screen.fill(color=color, rect=rect)
 
+def check_cherry(cherry, snake):
+    """Given a cherry position and a snake, check if the cherry is on the snake"""
+
+    for coord in snake:
+        if cherry == coord: return True
+    return False
+
+def reset_cherry(snake):
+    """Given a snake, return a random position that is not on the snake"""
+
+    pos = (random.randint(0, GRID_SIZE-1), random.randint(0, GRID_SIZE-1))
+    while check_cherry(pos, snake):
+        pos = (random.randint(0, GRID_SIZE-1), random.randint(0, GRID_SIZE-1))
+
+    return pos
+
+
+snake = [((GRID_SIZE//2, GRID_SIZE//2))]
+cherry = reset_cherry(snake)
+
+del_x = 0
+del_y = 0
+
+# pygame setup
+pygame.init()
+screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
+clock = pygame.time.Clock()
+running = True
+dt = 0
+
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -54,8 +72,9 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Reset the frame by drawing the grid
+    # Reset the frame by drawing the grid and cherry
     draw_grid()
+    fill_square(cherry, "red")
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_UP]:
@@ -71,8 +90,14 @@ while running:
         del_x = 1
         del_y = 0
 
-    head = (head[0]+del_x, head[1]+del_y)
-    fill_square(head, "green")
+    snake.insert(0, ((snake[0][0]+del_x, snake[0][1]+del_y)))
+    if snake[0] == cherry:
+        cherry = reset_cherry(snake)
+    else:
+        snake.pop()
+
+    for coord in snake:
+        fill_square(coord, "green")
 
     # flip() the display to put your work on screen
     pygame.display.flip()
